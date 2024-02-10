@@ -13,8 +13,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
 //    Define the view
     var webView: WKWebView!
     var progressView: UIProgressView!
-//    Define the websites
-    var websites = ["apple.com", "hackingwithswift.com"]
+    var website: String?
+    var websites: [String]?
     
     override func loadView() {
         //        Create the webview
@@ -25,7 +25,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 //       Cast the website string as URL and pass it in a URLRequest to the webView to load
-        let url = URL(string: "https://" + websites[0])!
+        let url = URL(string: "https://" + website!)!
         webView.load(URLRequest(url: url))
 //        Allow swiping back and forward to navigate in the webview
         webView.allowsBackForwardNavigationGestures = true
@@ -49,9 +49,9 @@ class ViewController: UIViewController, WKNavigationDelegate {
     @objc func openTapped(){
 //        create an alert controller
         let ac = UIAlertController(title: "Open page", message: nil, preferredStyle: .actionSheet)
-//        For each website in the website array, add a button which calls the openPage function on that website
-        for website in websites {
-            ac.addAction(UIAlertAction(title: website, style: .default, handler: openPage))
+//        Add a button which calls the openPage function on that website
+        for site in websites!{
+            ac.addAction(UIAlertAction(title: site, style: .default, handler: openPage))
         }
 //        Have a cancel button in the alert controller
         ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -84,14 +84,14 @@ class ViewController: UIViewController, WKNavigationDelegate {
         let url = navigationAction.request.url
 //        Optionally unwrap the url's host property and assign it to the host constant
         if let host = url?.host{
-//            For each website, check to see if the host property contains that website. If so, return a decision of allow and stop there.
-            print(host)
-            for website in websites {
-                if host.contains(website){
+//            Check to see if the host property contains that website. If so, return a decision of allow and stop there.
+            for site in websites!{
+                if host.contains(site){
                     decisionHandler(.allow)
                     return
                 }
             }
+//            If not, call the bad request function.
             badRequest()
         }
         decisionHandler(.cancel)
